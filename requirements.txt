@@ -1,0 +1,10 @@
+# Core pipeline — stem separation (pulls torch automatically)
+demucs
+soundfile
+# Analysis / benchmarking extras (bin/ssm.py, bin/bench.py)
+numpy
+librosa
+matplotlib
+# Optional — OCR of burned-in hard-subs; macOS only (bin/ocr_hardsubs.py):
+#   ocrmac
+# Note: lyric transcription (openai-whisper) is run via `uvx` on demand — see setup.sh.

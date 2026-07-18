@@ -1,0 +1,39 @@
+# ── Never commit audio/video or anything derived from a specific recording ──
+# This tool processes audio you own; the recordings, stems, renders, and any
+# transcribed-lyric JSON are NOT yours to redistribute. Keep them out of git.
+*.wav
+*.mp3
+*.flac
+*.m4a
+*.wv
+*.aac
+*.ogg
+*.mp4
+*.mkv
+*.mov
+*.webm
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.srt
+*.ass
+*.lrc
+*.cue
+# per-song working + output dirs
+work/
+out/
+cd-dump/
+anthem/
+# whisper/OCR outputs carry copyrighted lyric text
+*vocals.json
+*cues*.json
+*.toc
+# env
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# ...except the CC-licensed demo asset (Jonathan Coulton, CC BY-NC 3.0)
+!demo.gif
