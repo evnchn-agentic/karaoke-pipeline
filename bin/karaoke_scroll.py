@@ -58,8 +58,14 @@ Style: KARS,PingFang SC,{fs},&H0066FF66,&H00F5F5F5,&H00202020,&H90000000,-1,0,0,
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """
 
-# per-offset appearance for context (non-active) lines: (alpha, greyscale colour)
-CONTEXT = {1: ("&H35&", "&HD0D0D0&"), 2: ("&H85&", "&HB0B0B0&")}
+def context_style(d):
+    """Appearance of a context (non-active) line `d` slots from the active one.
+    Dimmer + more transparent with distance — works for any --slots, not just 1/2.
+    Returns (alpha, greyscale-colour) as ASS &H..& literals."""
+    d = max(1, abs(d))
+    alpha = min(0xD5, 0x35 + (d - 1) * 0x50)   # 1→0x35, 2→0x85, 3→0xD5(cap)
+    g = max(0x70, 0xD0 - (d - 1) * 0x20)        # 1→D0, 2→B0, 3→90, floor 70
+    return f"&H{alpha:02X}&", f"&H{g:02X}{g:02X}{g:02X}&"
 
 
 def main():
@@ -103,7 +109,7 @@ def main():
     lines_out = []
 
     def ctx_body(off, text, extra=""):  # dim context (non-active) line at slot `off`
-        alpha, col = CONTEXT[abs(off)]
+        alpha, col = context_style(off)
         text = text.replace("{", "").replace("}", "")
         return "{" + extra + f"\\1c{col}\\alpha{alpha}" + "}" + text
 

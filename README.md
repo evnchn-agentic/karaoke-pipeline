@@ -23,9 +23,11 @@ This tool does **not** acquire music. Feed it audio **you already own the right
 to use** — your own CD rips, purchased downloads, or Creative-Commons tracks.
 For a legally-clear test track, *Code Monkey* by Jonathan Coulton is **CC BY-NC
 3.0** (free for non-commercial use with attribution) and is available from the
-Internet Archive. Nothing copyrighted is bundled with this repo — see
-`.gitignore`, which deliberately keeps all audio/video and any transcribed-lyric
-JSON out of version control.
+Internet Archive. No commercial recordings are bundled with this repo, and
+`.gitignore` deliberately keeps all audio/video and transcribed-lyric JSON out of
+version control. The one media file included — `demo.gif` — is a CC BY-NC 3.0
+derivative of *Code Monkey*, licensed **separately from the code**; see
+[License](#license) below.
 
 ## Usage
 
@@ -87,3 +89,12 @@ same view from a timed `.lrc` or from Whisper), and `ocr_hardsubs.py` / `bench.p
   art, blurred (`boxblur`), for a nicer background.
 - **GPU node**: for large batches, run Demucs on a CUDA machine; the render step
   stays cheap and local.
+
+## License
+
+- **Code** — everything except `demo.gif` — is [MIT](LICENSE).
+- **`demo.gif`** is a scrolling-lyrics render derived from *Code Monkey* by
+  Jonathan Coulton, and is licensed **separately** under
+  [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/) (attribution,
+  **non-commercial only**). It is **not** covered by the MIT license — do not
+  reuse it commercially.

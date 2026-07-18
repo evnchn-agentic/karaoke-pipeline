@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/usr/bin/env bash
 # karaoke.sh — turn ONE legally-owned audio file into a karaoke lyrics video,
 # in both original-mix and no-vocal (instrumental) formats, fully local.
 #
@@ -15,8 +15,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-FFMPEG=/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg
-FFPROBE=/opt/homebrew/opt/ffmpeg-full/bin/ffprobe
+# Prefer Homebrew's ffmpeg-full (has libass); else fall back to ffmpeg/ffprobe on PATH.
+# Override either by exporting FFMPEG=/path before running.
+FFMPEG="${FFMPEG:-/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg}"; [ -x "$FFMPEG" ] || FFMPEG=ffmpeg
+FFPROBE="${FFPROBE:-/opt/homebrew/opt/ffmpeg-full/bin/ffprobe}"; [ -x "$FFPROBE" ] || FFPROBE=ffprobe
 PY="$ROOT/.venv/bin/python"
 
 INPUT="${1:?usage: karaoke.sh <input-audio> [--lang ..] [--res ..] [--device ..] [--model ..]}"; shift || true
@@ -48,8 +50,9 @@ echo "==> [2/4] transcribing vocals with word timestamps (whisper $MODEL) ..."
 WHISPER_ARGS=(--model "$MODEL" --word_timestamps True --output_format json \
               --output_dir "$WORK" --device cpu --fp16 False)
 [[ "$LANG_OPT" != "auto" ]] && WHISPER_ARGS+=(--language "$LANG_OPT")
-PATH="/opt/homebrew/opt/ffmpeg-full/bin:$PATH" \
-  uvx --from openai-whisper whisper "$VOCALS" "${WHISPER_ARGS[@]}"
+# let whisper find the same ffmpeg (only prepend when it's an absolute path)
+case "$FFMPEG" in /*) export PATH="$(dirname "$FFMPEG"):$PATH";; esac
+uvx --from openai-whisper whisper "$VOCALS" "${WHISPER_ARGS[@]}"
 JSON="$WORK/vocals.json"
 [[ -f "$JSON" ]] || { echo "whisper json missing" >&2; exit 1; }
 
