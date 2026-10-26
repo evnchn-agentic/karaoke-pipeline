@@ -48,7 +48,8 @@ VOCALS="$STEM/vocals.wav"; NOVOX="$STEM/no_vocals.wav"
 
 echo "==> [2/4] transcribing vocals with word timestamps (whisper $MODEL) ..."
 WHISPER_ARGS=(--model "$MODEL" --word_timestamps True --output_format json \
-              --output_dir "$WORK" --device cpu --fp16 False)
+              --output_dir "$WORK" --device cpu --fp16 False \
+              --condition_on_previous_text False)  # less looping over instrumental breaks
 [[ "$LANG_OPT" != "auto" ]] && WHISPER_ARGS+=(--language "$LANG_OPT")
 # let whisper find the same ffmpeg (only prepend when it's an absolute path)
 case "$FFMPEG" in /*) export PATH="$(dirname "$FFMPEG"):$PATH";; esac
