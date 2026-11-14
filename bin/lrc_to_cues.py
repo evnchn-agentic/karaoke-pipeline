@@ -12,9 +12,12 @@ import sys
 TS = re.compile(r"\[(\d+):(\d+(?:\.\d+)?)\]")
 META = re.compile(r"^\[[a-zA-Z]+:")
 # "作曲 : X" / "词：X" / "Mixed By : X": a short label naming a credit role, then a colon
-CREDIT = re.compile(r"^[^:：]{0,8}(词|詞|曲|编|編|制作|製作|监制|監製|混音|录音|錄音|音频|音頻|母带|母帶|"
-                    r"工程|和声|和聲|lyric|compos|arrang|produc|mix|master|engineer|written)"
-                    r"[^:：]{0,8}[:：]\s*\S", re.I)
+CREDIT = re.compile(
+    r"\s*([作填原]?[词詞曲]|[词詞]曲|[编編]曲|(制作|製作|监制|監製)人?|"
+    r"(混音|录音|錄音|音频|音頻|母带|母帶)(工程师|工程師|师|師)?|和[声聲]([编編]写|[编編]寫)?|"
+    r"lyrics?( by)?|lyricist|composer|composed by|music( by)?|arranger|arranged by|"
+    r"producers?|produced by|(mix|mixed|mixing|master|mastered|mastering)( by| engineer)?|"
+    r"(recording )?engineer|written by)\s*[:：]\s*\S", re.I)
 
 
 def main():
