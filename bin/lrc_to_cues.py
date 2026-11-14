@@ -11,6 +11,7 @@ import sys
 
 TS = re.compile(r"\[(\d+):(\d+(?:\.\d+)?)\]")
 META = re.compile(r"^\[[a-zA-Z]+:")
+CREDIT = re.compile(r"^[^:：]{1,20}\s[:：]\s+\S")  # "作曲 : X": spaced colon, short label
 
 
 def main():
@@ -32,6 +33,17 @@ def main():
         for mm, ss in stamps:
             events.append((int(mm) * 60 + float(ss) + offset, text))
     events.sort(key=lambda e: e[0])
+
+    # Some sources (e.g. NetEase) open and close a song with credit lines such as
+    # "作词 : X" on placeholder timestamps; they are not sung. Blank the leading and
+    # trailing runs of such lines but keep their timestamps as line boundaries.
+    sung = [i for i, (_, text) in enumerate(events) if text]
+    for run in (sung, sung[::-1]):
+        for i in run:
+            if not CREDIT.match(events[i][1]):
+                break
+            print(f"skipped credit line: {events[i][1]}", file=sys.stderr)
+            events[i] = (events[i][0], "")
 
     cues = []
     for i, (t, text) in enumerate(events):
