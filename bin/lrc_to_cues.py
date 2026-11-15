@@ -11,6 +11,13 @@ import sys
 
 TS = re.compile(r"\[(\d+):(\d+(?:\.\d+)?)\]")
 META = re.compile(r"^\[[a-zA-Z]+:")
+# "作曲 : X" / "词：X" / "Mixed By : X": a short label naming a credit role, then a colon
+CREDIT = re.compile(
+    r"\s*([作填原]?[词詞曲]|[词詞]曲|[编編]曲|(制作|製作|监制|監製)人?|"
+    r"(混音|录音|錄音|音频|音頻|母带|母帶)(工程师|工程師|师|師)?|和[声聲]([编編]写|[编編]寫)?|"
+    r"lyrics?( by)?|lyricist|composer|composed by|music( by)?|arranger|arranged by|"
+    r"producers?|produced by|(mix|mixed|mixing|master|mastered|mastering)( by| engineer)?|"
+    r"(recording )?engineer|written by)\s*[:：]\s*\S", re.I)
 
 
 def main():
@@ -32,6 +39,14 @@ def main():
         for mm, ss in stamps:
             events.append((int(mm) * 60 + float(ss) + offset, text))
     events.sort(key=lambda e: e[0])
+
+    # Some sources (e.g. NetEase) open and close a song with credit lines such as
+    # "作词 : X" on placeholder timestamps; they are not sung. Blank them but keep
+    # their timestamps as line boundaries.
+    for i, (t, text) in enumerate(events):
+        if CREDIT.match(text):
+            print(f"skipped credit line: {text}", file=sys.stderr)
+            events[i] = (t, "")
 
     cues = []
     for i, (t, text) in enumerate(events):
