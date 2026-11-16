@@ -40,4 +40,20 @@ assert run("""[00:00.00]作词 : Writer A
 [00:09.00]
 """, encoding="utf-8-sig") == [(5.0, 9.0, "first sung line")]
 assert run("[00:05.00]first sung line\n[00:09.00]\n", encoding="utf-8-sig") == [(5.0, 9.0, "first sung line")]
+# a bilingual LRC stamps each translation with its line's time: one cue per time, the first (sung) line,
+# spanning to the next distinct time instead of flashing for 0 s
+assert run("""[00:05.00]first sung line
+[00:05.00]第一句译文
+[00:09.00]second sung line
+[00:09.00]第二句译文
+[00:13.00]
+""") == [(5.0, 9.0, "first sung line"), (9.0, 13.0, "second sung line")]
+
+# credits sharing a time with a lyric, before or after it, never cost the lyric its span
+assert run("""[00:00.00]作词 : Writer A
+[00:00.00]Song - Artist
+[00:00.00]作曲 : Composer B
+[00:05.00]first sung line
+[00:09.00]
+""") == [(0.0, 5.0, "Song - Artist"), (5.0, 9.0, "first sung line")]
 print("ok")
