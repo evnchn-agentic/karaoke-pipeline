@@ -30,7 +30,7 @@ def main():
     a = ap.parse_args()
     src, dst, offset = a.src, a.dst, a.offset
     events = []  # (time, text)
-    for line in open(src, encoding="utf-8"):
+    for line in open(src, encoding="utf-8-sig"):
         stamps = TS.findall(line)
         if not stamps or META.match(line):
             continue
