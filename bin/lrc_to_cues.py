@@ -30,7 +30,7 @@ def main():
     a = ap.parse_args()
     src, dst, offset = a.src, a.dst, a.offset
     events = []  # (time, text)
-    for line in open(src, encoding="utf-8"):
+    for line in open(src, encoding="utf-8-sig"):
         stamps = TS.findall(line)
         if not stamps or META.match(line):
             continue
@@ -47,6 +47,20 @@ def main():
         if CREDIT.match(text):
             print(f"skipped credit line: {text}", file=sys.stderr)
             events[i] = (t, "")
+
+    # Bilingual LRCs stamp each translation with the time of the line it translates, and
+    # credits often share the first lyric's time. Two cues at one time give the first a
+    # zero-length span, so keep one line per time: the first non-empty one.
+    merged = []
+    for t, text in events:
+        if merged and merged[-1][0] == t:
+            if not merged[-1][1]:
+                merged[-1] = (t, text)
+            elif text:
+                print(f"dropped same-time line: {text}", file=sys.stderr)
+            continue
+        merged.append((t, text))
+    events = merged
 
     cues = []
     for i, (t, text) in enumerate(events):
