@@ -67,13 +67,12 @@ def build_line(seg, next_start):
         if dur <= 0:
             dur = 1
         tokens.append(f"{{\\kf{dur}}}{text}")
-        # Gap sweep on the joining space, so the wipe pauses through silence.
+        # Gap sweep on the joining space, so the wipe pauses through silence. Whisper
+        # marks a word boundary with a leading space; CJK tokens carry none.
         if i + 1 < len(words):
+            sep = " " if words[i + 1]["word"][:1].isspace() else ""
             gap = cs(float(words[i + 1]["start"]) - w_end)
-            if gap > 0:
-                tokens.append(f"{{\\kf{gap}}} ")
-            else:
-                tokens.append(" ")
+            tokens.append(f"{{\\kf{gap}}}{sep}" if gap > 0 else sep)
     return start, end, "".join(tokens)
 
 
