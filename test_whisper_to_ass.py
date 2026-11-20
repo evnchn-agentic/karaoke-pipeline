@@ -19,6 +19,7 @@ assert shown([(" Code", 0.0), (" Monkey,", 0.4), (" get", 0.8)]) == "Code Monkey
 assert shown([(" 淋", 0.0), ("出", 0.4), ("眼", 0.8), ("泪", 1.2)]) == "淋出眼泪"
 assert shown([(" 回", 0.0), ("头", 0.4), (" 再", 1.0), ("看", 1.4)]) == "回头 再看"
 assert shown([(" Tas", 0.0), ("ks", 0.4), (" 爱", 0.8), ("你", 1.2)]) == "Tasks 爱你"
+assert shown([(" Hi", 0.0), (",", 0.3), (" there", 0.6), ("!", 0.9)]) == "Hi, there!"  # no gaps
 
 # a pause before an unspaced token still gets its own sweep, so the fill waits through it
 line = build_line({"words": [{"word": " 淋", "start": 0.0, "end": 0.3},
